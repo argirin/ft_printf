@@ -5,29 +5,36 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: argirin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/12/02 15:06:49 by argirin           #+#    #+#             */
-/*   Updated: 2016/12/13 20:12:44 by argirin          ###   ########.fr       */
+/*   Created: 2017/01/09 12:54:12 by argirin           #+#    #+#             */
+/*   Updated: 2017/01/09 12:54:14 by argirin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_printf.h"
 
-void		ft_show_inside(t_format fmt)
+int		launch(char **addr_str, va_list args)
 {
-	printf("BLANK:\t\t%d\n", fmt.flags.blank);
-	  printf("MINUS:\t\t%d\n", fmt.flags.minus);
-	  printf("PLUS:\t\t%d\n", fmt.flags.plus);
-	  printf("DIEZ:\t\t%d\n", fmt.flags.diez);
-	  printf("ZERO:\t\t%d\n", fmt.flags.zero);
-	  printf("WIDTH:\t\t%d\n", fmt.width);
-	  printf("PRECISION:\t\t%d\n", fmt.precision);
-	  printf("MODIFIER:\t\t%d\n", fmt.modifier);
-	  printf("TYPE:\t\t%c\n", fmt.type);
+	int			i;
+	t_format	format;
+
+	i = 0;
+	check_flag(addr_str, &format);
+	check_width(addr_str, &format);
+	check_precision(addr_str, &format);
+	check_modifier(addr_str, &format);
+	if ((is_type(**addr_str)) == 1)
+		format.type = **addr_str;
+	else
+		return (apply_flag_percent(&format, addr_str));
+	i += check_conversion_dou(&format, args);
+	i += check_conversion_xb(&format, args);
+	i += check_conversion_sc(&format, args, addr_str);
+	return (i);
 }
 
-int			ft_vfprintf(const char *format, va_list args)
+int		ft_vfprintf(const char *format, va_list args)
 {
-	int		ret;
+	int			ret;
 
 	ret = 0;
 	while (*format != '\0')
@@ -35,60 +42,27 @@ int			ft_vfprintf(const char *format, va_list args)
 		if (*format == '%')
 		{
 			format++;
-			if (*format == '%')
-				ft_putchar('%');
-			ret = ft_proto((char**)&format, args);
-			//ft_show_inside(fmt);
-			//fmt.flags.blank;
-			/*if (*format == 'D')
-			  ret += ;
-			  if (*format == 'i')
-			  ret += manage_x;
-			  if (*format == 'p')
-			  ret += manage_x;
-			  if (*format == 'O')
-			  ret += manage_x;
-			  if (*format == 'u')
-			  ret += manage_x;
-			  if (*format == 'U')
-			  ret += manage_x;
-			  if (*format == 'S')
-			  ret += manage_x;
-			  if (*format == 'X')
-			  ret += manage_x;
-			  if (*format == 'c')
-			  ret += manage_x;
-			  if (*format == 'C')
-			  ret += manage_x;
-			  else
-			//return (-1);*/
+			if (!*format)
+				return (ret);
+			ret += launch((char**)&format, args);
 		}
 		else
 		{
-			ft_putchar(*format);
 			ret++;
+			ft_putchar(*format);
 		}
 		format++;
 	}
 	return (ret);
 }
 
-int			ft_printf(const char *format, ...)
+int		ft_printf(const char *format, ...)
 {
-	va_list	args;
-	int		ret_val;
+	va_list		args;
+	int			ret_val;
 
 	va_start(args, format);
 	ret_val = ft_vfprintf(format, args);
 	va_end(args);
 	return (ret_val);
-}
-
-int		ft_proto2(t_format *fmt, va_list args)
-{
-	int ret;
-	
-	if (fmt->type == 'd' || fmt->type == 'i')
-		ret = apply_flag_int(fmt, args);
-	return (ret);
 }

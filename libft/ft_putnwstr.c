@@ -1,28 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strnew.c                                        :+:      :+:    :+:   */
+/*   ft_putnwstr.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: argirin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/01/09 13:12:04 by argirin           #+#    #+#             */
-/*   Updated: 2017/01/09 13:12:06 by argirin          ###   ########.fr       */
+/*   Created: 2017/01/09 13:10:50 by argirin           #+#    #+#             */
+/*   Updated: 2017/01/09 13:10:52 by argirin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strnew(size_t size)
+int			ft_putnwstr(const wchar_t *str, int len)
 {
-	char	*tab;
+	int		i;
 
-	if (!(tab = (char*)malloc(sizeof(char) * size + 1)))
-		return (NULL);
-	while (size)
+	i = 0;
+	while (*str && i < len)
 	{
-		tab[size] = '\0';
-		size--;
+		if (*str <= 0x7F)
+			i++;
+		else if (*str <= 0x7FF)
+			i += 2;
+		else if (*str <= 0xFFFF)
+			i += 3;
+		else if (*str <= 0x10FFFF)
+			i += 4;
+		if (i <= len)
+			ft_putwchar(*str);
+		str++;
 	}
-	tab[size] = '\0';
-	return (tab);
+	return (i);
 }

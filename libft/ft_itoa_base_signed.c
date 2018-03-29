@@ -1,49 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_itoa.c                                          :+:      :+:    :+:   */
+/*   ft_itoa_base_signed.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: argirin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/01/09 13:10:04 by argirin           #+#    #+#             */
-/*   Updated: 2017/01/09 13:10:05 by argirin          ###   ########.fr       */
+/*   Created: 2017/01/09 13:10:17 by argirin           #+#    #+#             */
+/*   Updated: 2017/01/09 13:10:19 by argirin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int	ft_count_len(ssize_t nb)
-{
-	int		len;
-
-	len = 0;
-	if (!nb)
-		return (1);
-	while (nb != 0)
-	{
-		len++;
-		nb /= 10;
-	}
-	return (len);
-}
-
-char		*ft_itoa(ssize_t nbr)
+char		*ft_itoa_base_signed(ssize_t nbr, int base)
 {
 	char	*s;
 	int		len;
 	int		neg;
+	ssize_t	nb;
 
-	neg = (nbr < 0) ? 1 : 0;
-	len = ft_count_len(nbr) + neg;
+	if (base < 2 || base > 16)
+		return (NULL);
+	nb = nbr;
+	neg = (base == 10 && nb < 0) ? 1 : 0;
+	len = neg;
+	while ((nbr /= base) != 0)
+		len++;
 	if (!(s = (char*)malloc(sizeof(char) * (len + 1))))
 		return (NULL);
 	s[len] = '\0';
-	if (!nbr)
+	if (!nb)
 		s[--len] = '0';
-	while (nbr != 0)
+	while (nb != 0)
 	{
-		s[--len] = (!neg) ? (nbr % 10 + '0') : ((nbr % 10) * -1 + '0');
-		nbr /= 10;
+		s[--len] = (nb > 0) ? HEXA[nb % base] : HEXA[(nb % base) * -1];
+		nb /= base;
 	}
 	if (neg)
 		s[--len] = '-';

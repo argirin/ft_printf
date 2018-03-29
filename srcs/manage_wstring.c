@@ -1,44 +1,44 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   manage_wchar.c                                     :+:      :+:    :+:   */
+/*   manage_wstring.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: argirin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/01/09 12:57:02 by argirin           #+#    #+#             */
-/*   Updated: 2017/01/09 12:57:04 by argirin          ###   ########.fr       */
+/*   Created: 2017/01/09 12:57:16 by argirin           #+#    #+#             */
+/*   Updated: 2017/01/09 12:57:19 by argirin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_printf.h"
 
-int			len_wchar(wchar_t c, int len)
+static int	print_flag_wstr(t_format *fmt, wchar_t *str, int len)
 {
-	if (c <= 0x7F)
-		len = 1;
-	else if (c <= 0x7FF)
-		len = 2;
-	else if (c <= 0xFFFF)
-		len = 3;
-	else if (c <= 0x10FFFF)
-		len = 4;
-	else
-		len = 0;
-	return (len);
-}
-
-int			apply_flag_wchar(t_format *fmt, va_list args)
-{
-	wchar_t	c;
-	int		len;
 	int		ret_val;
 
-	len = 0;
 	ret_val = 0;
-	c = (wchar_t)va_arg(args, wint_t);
-	len = len_wchar(c, len);
+	if (fmt->flags.minus == 0)
+		ret_val += aff_blank(fmt);
+	ret_val += ft_putnwstr(str, len);
+	if (fmt->flags.minus == 1)
+		ret_val += aff_blank(fmt);
+	return (ret_val);
+}
+
+int			apply_flag_wstr(t_format *fmt, va_list args)
+{
+	int		len;
+	int		ret_val;
+	wchar_t	*str;
+
+	ret_val = 0;
+	str = va_arg(args, wchar_t*);
 	if (fmt->flags.minus == 1 && fmt->flags.zero == 1)
 		fmt->flags.zero = 0;
+	if (str == NULL)
+		str = L"(null)";
+	len = (fmt->precision != -1) ? ft_calc_wstrlen(str, fmt->precision, 0) :
+		ft_wstrlen(str);
 	if (fmt->width != 0 && fmt->precision == -1 && fmt->width <= len)
 		fmt->width = 0;
 	if (fmt->width != 0 && fmt->precision == -1 && fmt->width > len)
@@ -47,10 +47,5 @@ int			apply_flag_wchar(t_format *fmt, va_list args)
 		fmt->width -= len;
 	if (fmt->precision != -1 && fmt->precision >= len)
 		fmt->precision = len;
-	if (fmt->flags.minus == 0)
-		ret_val += aff_blank(fmt);
-	ft_putwchar(c);
-	if (fmt->flags.minus == 1)
-		ret_val += aff_blank(fmt);
-	return (ret_val + len);
+	return (print_flag_wstr(fmt, str, len));
 }

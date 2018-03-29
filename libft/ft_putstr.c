@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: argirin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/11/08 21:19:51 by argirin           #+#    #+#             */
-/*   Updated: 2016/11/16 14:38:54 by argirin          ###   ########.fr       */
+/*   Created: 2017/01/09 13:11:05 by argirin           #+#    #+#             */
+/*   Updated: 2017/01/09 13:11:07 by argirin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,8 @@
 
 void	ft_putstr(char const *str)
 {
-	int	i;
-
-	i = 0;
 	if (!str)
 		return ;
-	while (str[i])
-	{
-		ft_putchar(str[i]);
-		i++;
-	}
+	while (*str)
+		write(1, &*str++, 1);
 }

@@ -1,28 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strnew.c                                        :+:      :+:    :+:   */
+/*   ft_wstrlen.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: argirin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/01/09 13:12:04 by argirin           #+#    #+#             */
-/*   Updated: 2017/01/09 13:12:06 by argirin          ###   ########.fr       */
+/*   Created: 2017/01/09 13:12:16 by argirin           #+#    #+#             */
+/*   Updated: 2017/01/09 13:12:17 by argirin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strnew(size_t size)
+int		ft_wstrlen(wchar_t *str)
 {
-	char	*tab;
+	int		i;
 
-	if (!(tab = (char*)malloc(sizeof(char) * size + 1)))
-		return (NULL);
-	while (size)
+	i = 0;
+	while (*str)
 	{
-		tab[size] = '\0';
-		size--;
+		if (*str <= 0x7F)
+			i += 1;
+		else if (*str <= 0x7FF)
+			i += 2;
+		else if (*str <= 0xFFFF)
+			i += 3;
+		else if (*str <= 0x10FFFF)
+			i += 4;
+		str++;
 	}
-	tab[size] = '\0';
-	return (tab);
+	return (i);
 }

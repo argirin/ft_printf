@@ -3,50 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   manage_string.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gavizet <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: argirin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/12/02 11:06:15 by gavizet           #+#    #+#             */
-/*   Updated: 2016/12/06 14:10:05 by argirin          ###   ########.fr       */
+/*   Created: 2017/01/09 12:56:29 by argirin           #+#    #+#             */
+/*   Updated: 2017/01/09 12:56:31 by argirin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_printf.h"
-#include <stdio.h>
 
-char	*manage_string(const char *format)
+int			apply_flag_s(t_format *fmt, va_list args)
 {
-	int ret;
-	char *cpy;
-	int len;
-	t_flags *flag;
-	int i;
+	int		len;
+	char	*str;
+	int		ret_val;
 
-	flag = 0;
-	len = 0;
-	ret = 0;
-	i = 0;
-	/*if (flag->width > 0)
-	{
-		while (*format)
-		{
-			*cpy++ = *format;
-			len++;
-		}
-		if (len >= flag->width)
-			flag->width = 0;
-		else
-			flag->width = flag->width - len;
-	}*/
-	while (format[i])
-		i++;
-	i++;
-	while (format[i])
-		i = i + 1;
-	while (len < i)
-	{
-		ft_print_char(format[len++]);
-		//*format++;
-		++ret;
-	}
-	return (ret);
+	ret_val = 0;
+	str = va_arg(args, char*);
+	if (fmt->flags.minus == 1 && fmt->flags.zero == 1)
+		fmt->flags.zero = 0;
+	if (str == NULL)
+		str = "(null)";
+	len = ft_strlen(str);
+	if (fmt->precision != -1 && fmt->precision >= len)
+		fmt->precision = len;
+	if (fmt->width != 0 && fmt->precision == -1 && fmt->width <= len)
+		fmt->width = 0;
+	if (fmt->width != 0 && fmt->precision == -1 && fmt->width > len)
+		fmt->width -= len;
+	if (fmt->width != 0 && fmt->precision != -1 && *str)
+		fmt->width -= fmt->precision;
+	ret_val += (fmt->flags.minus == 0) ?
+			aff_blank(fmt) + putstr_preci(str, fmt) :
+			putstr_preci(str, fmt) + aff_blank(fmt);
+	return (ret_val);
 }

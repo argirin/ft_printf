@@ -1,25 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   printf.h                                           :+:      :+:    :+:   */
+/*   ft_printf.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gavizet <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: argirin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/11/30 10:04:16 by gavizet           #+#    #+#             */
-/*   Updated: 2016/12/13 20:44:01 by argirin          ###   ########.fr       */
+/*   Created: 2017/01/09 12:58:14 by argirin           #+#    #+#             */
+/*   Updated: 2017/01/09 12:58:17 by argirin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PRINTF_H
-# define PRINTF_H
+#ifndef FT_PRINTF_H
+# define FT_PRINTF_H
+
+# ifndef HEXA
+#  define HEXA "0123456789abcdef"
+# endif
 
 # include <stdlib.h>
 # include <unistd.h>
+# include <limits.h>
+# include <wchar.h>
 # include <stdarg.h>
 # include <stdio.h>
 # include "../libft/libft.h"
 
-# define HEXA "0123456789ABCDEF"
 # define M_H 1
 # define M_HH 5
 # define M_L 2
@@ -45,24 +50,41 @@ typedef	struct		s_format
 	char			type;
 }					t_format;
 
+int					is_type(char c);
+int					is_flags(char c);
+
+int					aff_hexa(t_format *fmt);
+int					aff_zero(t_format *fmt);
+int					aff_blank(t_format *fmt);
+int					putstr_wsign(char *str, t_format *fmt);
+int					putstr_preci(char *str, t_format *fmt);
+
 int					ft_printf(const char *format, ...);
-int					manage_string(const char *format);
+int					launch(char **addr_str, va_list args);
 
-void				ft_init_flags(t_format *fmt);
-int				ft_proto(char **addr_str, va_list args);
-int				ft_proto2(t_format *fmt, va_list args);
-void				ft_flag(char **addr_str, t_format *addr_format);
-void				ft_width(char **addr_str, t_format *addr_format);
-void				ft_precision(char **addr_str, t_format *addr_format);
-char				*ft_modifier_int(t_format *fmt, va_list args);
-void				ft_modifier(char **addr_str, t_format *addr_format);
-int				apply_flag_int(t_format *fmt, va_list args);
+char				*convert_sint(t_format *fmt, va_list args);
+char				*convert_unsint(t_format *fmt, va_list args, int base);
 
-int					count_len_dec(long long nb);
-void				aff_nb(int nbr);
+int					apply_flag_d(t_format *fmt, va_list args);
+int					apply_flag_x(t_format *fmt, va_list args);
+int					apply_flag_o(t_format *fmt, va_list args);
+int					apply_flag_u(t_format *fmt, va_list args);
+int					apply_flag_b(t_format *fmt, va_list args);
+int					apply_flag_p(t_format *fmt, va_list args);
+int					apply_flag_s(t_format *fmt, va_list args);
+int					apply_flag_c(t_format *fmt, va_list args);
+int					apply_flag_pour(t_format *fmt, va_list args);
+int					apply_flag_wstr(t_format *fmt, va_list args);
+int					apply_flag_wchar(t_format *fmt, va_list args);
+int					apply_flag_percent(t_format *fmt, char **str);
 
-int					ft_is_type(char c);
-int					ft_is_flags(char c);
-void				ft_show_inside(t_format fmt);
+int					check_conversion_dou(t_format *fmt, va_list args);
+int					check_conversion_xb(t_format *fmt, va_list args);
+int					check_conversion_sc(t_format *fmt, va_list args,
+					char **addr_str);
+void				check_flag(char **addr_str, t_format *addr_format);
+void				check_width(char **addr_str, t_format *addr_format);
+void				check_precision(char **addr_str, t_format *addr_format);
+void				check_modifier(char **addr_str, t_format *addr_format);
 
 #endif
