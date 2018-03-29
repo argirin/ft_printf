@@ -1,6 +1,6 @@
 # ft_printf
 
-La fonctions printf() écrit sa sortie sur stdout, le flux de sortie standard.
+La fonction printf() écrit sa sortie sur stdout, le flux de sortie standard.
 
 Sujet complet : https://github.com/argirin/ft_printf/blob/master/ft_printf.pdf
 
